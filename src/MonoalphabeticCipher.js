@@ -7,7 +7,7 @@
  * Features:
  * - Algorithm-based key generation (no external files needed)
  * - Deterministic shuffling for consistent results
- * - Support for alphanumeric characters (a-z, A-Z, 0-9)
+ * - Support for alphanumeric and slash characters (a-z, A-Z, 0-9, /)
  * - Chrome extension compatible (offline operation)
  * - Minimal implementation (~20 lines of core logic)
  * 
@@ -29,8 +29,8 @@ export class MonoalphabeticCipher {
    * @private
    */
   generateTable(key) {
-    // Character set: a-z, A-Z, 0-9 (62 characters total)
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    // Character set: a-z, A-Z, 0-9, / (63 characters total)
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/';
     
     // Generate seed from secret key
     const seed = this.hashKey(key);
@@ -137,11 +137,12 @@ export class MonoalphabeticCipher {
     return {
       encryptTableSize: encryptKeys.length,
       decryptTableSize: decryptKeys.length,
-      isComplete: encryptKeys.length === 62 && decryptKeys.length === 62,
+      isComplete: encryptKeys.length === 63 && decryptKeys.length === 63,
       sampleMapping: {
         'a': this.encryptTable['a'],
         'A': this.encryptTable['A'], 
-        '0': this.encryptTable['0']
+        '0': this.encryptTable['0'],
+        '/': this.encryptTable['/']
       }
     };
   }

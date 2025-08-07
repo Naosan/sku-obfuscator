@@ -7,6 +7,7 @@ A lightweight and secure monoalphabetic cipher implementation for SKU encryption
 This package provides a simple yet effective monoalphabetic substitution cipher designed specifically for SKU (Stock Keeping Unit) encryption. It generates consistent character mappings from a secret key, making it perfect for scenarios where you need to:
 
 - Prevent Google search detection of original product IDs
+- **Hide URL structure completely** - No path separators visible
 - Enable offline decryption (Chrome extensions, etc.)
 - Maintain consistent encryption across multiple applications
 - Keep implementation minimal and maintainable
@@ -17,7 +18,7 @@ This package provides a simple yet effective monoalphabetic substitution cipher 
 - **🎯 Deterministic results** - Same key always produces same cipher
 - **📱 Chrome extension compatible** - Offline operation support  
 - **⚡ Minimal implementation** - Core logic in ~20 lines
-- **🔤 Full alphanumeric support** - a-z, A-Z, 0-9 (62 characters)
+- **🔤 Full character support** - a-z, A-Z, 0-9, / (63 characters)
 - **🛡️ Fisher-Yates shuffling** - Cryptographically sound mixing
 - **📦 ES Module ready** - Modern JavaScript import/export
 
@@ -80,10 +81,10 @@ import { generateSKU, decodeSKU } from 'monoalphabetic-cipher-js';
 
 // Generate SKU with prefix
 const sku = generateSKU("S5smas8TFSWpJUso6Ro3vK", "si");
-console.log(sku); // → "si@kUnXKnHqfkmAv9nAUjAusg"
+console.log(sku); // → "si@T13BQ3cpwTGPiz3OjmOvyt"
 
 // Decode SKU back to components
-const decoded = decodeSKU("si@kUnXKnHqfkmAv9nAUjAusg");
+const decoded = decodeSKU("si@T13BQ3cpwTGPiz3OjmOvyt");
 console.log(decoded);
 // → {
 //   prefix: "si",
@@ -162,7 +163,7 @@ function decodeSKUtoURL(sku) {
   return siteMap[prefix] + productId;
 }
 
-// Usage: decodeSKUtoURL("si@kUnXKnHqfkmAv9nAUjAusg")
+// Usage: decodeSKUtoURL("si@T13BQ3cpwTGPiz3OjmOvyt")
 // → "https://jp.mercari.com/item/mS5smas8TFSWpJUso6Ro3vK"
 ```
 
