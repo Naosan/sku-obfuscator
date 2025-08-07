@@ -38,7 +38,7 @@ yarn add git+https://github.com/Naosan/monoalphabetic-cipher-js.git
 ```javascript
 import { MonoalphabeticCipher } from 'monoalphabetic-cipher-js';
 
-// Create cipher with default key "SKU_AI_KEY"
+// Create cipher with default key "MONO_CIPHER_KEY"
 const cipher = new MonoalphabeticCipher();
 
 // Encrypt product ID
@@ -121,7 +121,7 @@ Perfect for offline SKU decoding in Chrome extensions:
 // content-script.js
 import { MonoalphabeticCipher } from './lib/monoalphabetic-cipher.js';
 
-const cipher = new MonoalphabeticCipher("SKU_AI_KEY");
+const cipher = new MonoalphabeticCipher("MONO_CIPHER_KEY");
 
 function decodeSKUtoURL(sku) {
   const [prefix, encrypted] = sku.split('@');

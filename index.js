@@ -12,9 +12,9 @@ export { MonoalphabeticCipher } from './src/MonoalphabeticCipher.js';
 
 /**
  * Default export for convenience
- * Creates a new cipher instance with default "SKU_AI_KEY"
+ * Creates a new cipher instance with default "MONO_CIPHER_KEY"
  */
-export default function createCipher(secretKey = "SKU_AI_KEY") {
+export default function createCipher(secretKey = "MONO_CIPHER_KEY") {
   return new MonoalphabeticCipher(secretKey);
 }
 
@@ -26,10 +26,10 @@ import { MonoalphabeticCipher } from './src/MonoalphabeticCipher.js';
 /**
  * Quick encrypt function using default key
  * @param {string} text - Text to encrypt
- * @param {string} secretKey - Optional secret key (default: "SKU_AI_KEY")
+ * @param {string} secretKey - Optional secret key (default: "MONO_CIPHER_KEY")
  * @returns {string} - Encrypted text
  */
-export function encrypt(text, secretKey = "SKU_AI_KEY") {
+export function encrypt(text, secretKey = "MONO_CIPHER_KEY") {
   const cipher = new MonoalphabeticCipher(secretKey);
   return cipher.encrypt(text);
 }
@@ -37,10 +37,10 @@ export function encrypt(text, secretKey = "SKU_AI_KEY") {
 /**
  * Quick decrypt function using default key
  * @param {string} text - Text to decrypt
- * @param {string} secretKey - Optional secret key (default: "SKU_AI_KEY")
+ * @param {string} secretKey - Optional secret key (default: "MONO_CIPHER_KEY")
  * @returns {string} - Decrypted text
  */
-export function decrypt(text, secretKey = "SKU_AI_KEY") {
+export function decrypt(text, secretKey = "MONO_CIPHER_KEY") {
   const cipher = new MonoalphabeticCipher(secretKey);
   return cipher.decrypt(text);
 }
@@ -49,10 +49,10 @@ export function decrypt(text, secretKey = "SKU_AI_KEY") {
  * Generate SKU with prefix
  * @param {string} productId - Product ID to encrypt
  * @param {string} prefix - SKU prefix (default: "si")
- * @param {string} secretKey - Optional secret key (default: "SKU_AI_KEY")
+ * @param {string} secretKey - Optional secret key (default: "MONO_CIPHER_KEY")
  * @returns {string} - Generated SKU in format "prefix@encryptedId"
  */
-export function generateSKU(productId, prefix = "si", secretKey = "SKU_AI_KEY") {
+export function generateSKU(productId, prefix = "si", secretKey = "MONO_CIPHER_KEY") {
   const cipher = new MonoalphabeticCipher(secretKey);
   const encrypted = cipher.encrypt(productId);
   return `${prefix}@${encrypted}`;
@@ -61,10 +61,10 @@ export function generateSKU(productId, prefix = "si", secretKey = "SKU_AI_KEY") 
 /**
  * Decode SKU to original product ID
  * @param {string} sku - SKU in format "prefix@encryptedId"
- * @param {string} secretKey - Optional secret key (default: "SKU_AI_KEY")
+ * @param {string} secretKey - Optional secret key (default: "MONO_CIPHER_KEY")
  * @returns {Object} - {prefix, productId, type: 'monoalphabetic'}
  */
-export function decodeSKU(sku, secretKey = "SKU_AI_KEY") {
+export function decodeSKU(sku, secretKey = "MONO_CIPHER_KEY") {
   const [prefix, encrypted] = sku.split('@');
   const cipher = new MonoalphabeticCipher(secretKey);
   const productId = cipher.decrypt(encrypted);

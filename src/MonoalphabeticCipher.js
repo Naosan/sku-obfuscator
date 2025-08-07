@@ -17,9 +17,9 @@
 export class MonoalphabeticCipher {
   /**
    * Creates a new MonoalphabeticCipher instance
-   * @param {string} secretKey - Secret key for generating cipher table (default: "SKU_AI_KEY")
+   * @param {string} secretKey - Secret key for generating cipher table (default: "MONO_CIPHER_KEY")
    */
-  constructor(secretKey = "SKU_AI_KEY") {
+  constructor(secretKey = "MONO_CIPHER_KEY") {
     this.generateTable(secretKey);
   }
   

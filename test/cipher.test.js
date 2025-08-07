@@ -217,7 +217,7 @@ function testChromeExtensionUsage() {
   
   // Simulate Chrome extension SKU to URL conversion
   function simulateChromeExtensionDecode(sku) {
-    const cipher = new MonoalphabeticCipher("SKU_AI_KEY");
+    const cipher = new MonoalphabeticCipher("MONO_CIPHER_KEY");
     const [prefix, encrypted] = sku.split('@');
     const productId = cipher.decrypt(encrypted);
     
@@ -257,7 +257,7 @@ function testChromeExtensionUsage() {
 function testRealWorldExamples() {
   console.log('📋 Testing real-world examples...');
   
-  const cipher = new MonoalphabeticCipher("SKU_AI_KEY");
+  const cipher = new MonoalphabeticCipher("MONO_CIPHER_KEY");
   
   // Test cases from documentation
   const realWorldCases = [
