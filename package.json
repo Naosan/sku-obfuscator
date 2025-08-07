@@ -1,0 +1,37 @@
+{
+  "name": "monoalphabetic-cipher-js",
+  "version": "1.0.0",
+  "description": "A lightweight and secure monoalphabetic cipher implementation for SKU encryption with deterministic algorithm-based key generation",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test/cipher.test.js",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "cipher",
+    "encryption",
+    "monoalphabetic",
+    "sku",
+    "substitution",
+    "cryptography"
+  ],
+  "author": "Naoki",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Naosan/monoalphabetic-cipher-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Naosan/monoalphabetic-cipher-js/issues"
+  },
+  "homepage": "https://github.com/Naosan/monoalphabetic-cipher-js#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "index.js",
+    "src/",
+    "README.md"
+  ]
+}
