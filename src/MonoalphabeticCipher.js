@@ -12,14 +12,14 @@
  * - Minimal implementation (~20 lines of core logic)
  * 
  * @author Naoki
- * @version 1.0.0
+ * @version 1.1.0
  */
 export class MonoalphabeticCipher {
   /**
    * Creates a new MonoalphabeticCipher instance
-   * @param {string} secretKey - Secret key for generating cipher table (default: "MONO_CIPHER_KEY")
+   * @param {string} secretKey - Secret key for generating cipher table (default: process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
    */
-  constructor(secretKey = "MONO_CIPHER_KEY") {
+  constructor(secretKey = process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY") {
     this.generateTable(secretKey);
   }
   

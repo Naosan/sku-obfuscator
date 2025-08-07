@@ -31,6 +31,28 @@ npm install git+https://github.com/Naosan/monoalphabetic-cipher-js.git
 yarn add git+https://github.com/Naosan/monoalphabetic-cipher-js.git
 ```
 
+## ⚙️ Configuration
+
+### Environment Variable
+
+You can set the default cipher key using the `MONO_CIPHER_KEY` environment variable:
+
+```bash
+# Windows
+set MONO_CIPHER_KEY=your-custom-secret-key
+
+# Linux/macOS
+export MONO_CIPHER_KEY=your-custom-secret-key
+
+# Node.js application
+process.env.MONO_CIPHER_KEY = "your-custom-secret-key";
+```
+
+**Priority order:**
+1. Explicitly passed `secretKey` parameter
+2. `process.env.MONO_CIPHER_KEY` environment variable
+3. Default fallback: `"MONO_CIPHER_KEY"`
+
 ## 📖 Quick Start
 
 ### Basic Usage
@@ -38,7 +60,7 @@ yarn add git+https://github.com/Naosan/monoalphabetic-cipher-js.git
 ```javascript
 import { MonoalphabeticCipher } from 'monoalphabetic-cipher-js';
 
-// Create cipher with default key "MONO_CIPHER_KEY"
+// Create cipher with default key (process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
 const cipher = new MonoalphabeticCipher();
 
 // Encrypt product ID
@@ -88,6 +110,10 @@ import { MonoalphabeticCipher } from 'monoalphabetic-cipher-js';
 // Use custom secret key
 const cipher = new MonoalphabeticCipher("MY_CUSTOM_SECRET_KEY");
 const encrypted = cipher.encrypt("productId");
+
+// Or use environment variable
+process.env.MONO_CIPHER_KEY = "MY_ENV_SECRET_KEY";
+const envCipher = new MonoalphabeticCipher(); // Uses environment variable
 ```
 
 ## 🔧 API Reference
@@ -96,7 +122,7 @@ const encrypted = cipher.encrypt("productId");
 
 #### Constructor
 ```javascript
-new MonoalphabeticCipher(secretKey = "SKU_AI_KEY")
+new MonoalphabeticCipher(secretKey = process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
 ```
 
 #### Methods

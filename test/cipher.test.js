@@ -42,6 +42,9 @@ async function runTests() {
     // Chrome extension simulation
     testChromeExtensionUsage();
     
+    // Environment variable support
+    testEnvironmentVariable();
+    
     console.log('\n🎉 All tests passed successfully!');
     
   } catch (error) {
@@ -275,6 +278,62 @@ function testRealWorldExamples() {
     assert(encrypted !== productId, `Real-world case ${index + 1}: Should actually encrypt the text`);
     assertEquals(encrypted.length, productId.length, `Real-world case ${index + 1}: Length should be preserved`);
   });
+}
+
+/**
+ * Test environment variable support
+ */
+function testEnvironmentVariable() {
+  console.log('📋 Testing environment variable support...');
+  
+  // Save original environment variable
+  const originalEnvVar = process.env.MONO_CIPHER_KEY;
+  
+  try {
+    // Test with environment variable set
+    process.env.MONO_CIPHER_KEY = "TEST_ENV_KEY";
+    
+    const envCipher = new MonoalphabeticCipher();
+    const testText = "EnvVarTest123";
+    const envEncrypted = envCipher.encrypt(testText);
+    const envDecrypted = envCipher.decrypt(envEncrypted);
+    
+    assertEquals(envDecrypted, testText, "Environment variable cipher should work correctly");
+    
+    // Test that different environment variable produces different result
+    const defaultCipher = new MonoalphabeticCipher("MONO_CIPHER_KEY");
+    const defaultEncrypted = defaultCipher.encrypt(testText);
+    
+    assert(envEncrypted !== defaultEncrypted, "Environment variable should produce different encryption");
+    
+    // Test explicit parameter overrides environment variable
+    const explicitCipher = new MonoalphabeticCipher("EXPLICIT_KEY");
+    const explicitEncrypted = explicitCipher.encrypt(testText);
+    
+    assert(explicitEncrypted !== envEncrypted, "Explicit parameter should override environment variable");
+    
+    // Test utility functions with environment variable
+    const utilityEncrypted = encrypt(testText); // Should use process.env.MONO_CIPHER_KEY
+    const utilityDecrypted = decrypt(utilityEncrypted);
+    
+    assertEquals(utilityDecrypted, testText, "Utility functions should use environment variable");
+    assertEquals(utilityEncrypted, envEncrypted, "Utility functions should match cipher instance with env var");
+    
+    // Test SKU generation with environment variable
+    const envSKU = generateSKU(testText, "env");
+    const decodedEnvSKU = decodeSKU(envSKU);
+    
+    assertEquals(decodedEnvSKU.productId, testText, "SKU generation should use environment variable");
+    assertEquals(decodedEnvSKU.prefix, "env", "SKU prefix should be preserved");
+    
+  } finally {
+    // Restore original environment variable
+    if (originalEnvVar !== undefined) {
+      process.env.MONO_CIPHER_KEY = originalEnvVar;
+    } else {
+      delete process.env.MONO_CIPHER_KEY;
+    }
+  }
 }
 
 // Run all tests

@@ -1,6 +1,6 @@
 {
   "name": "monoalphabetic-cipher-js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A lightweight and secure monoalphabetic cipher implementation for SKU encryption with deterministic algorithm-based key generation",
   "main": "index.js",
   "type": "module",
