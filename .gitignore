@@ -129,3 +129,7 @@ source-code.md
 
 # IDE settings
 .serena/
+
+# Claude development files (keep in repo for development, exclude from npm)
+# .claude/
+# CLAUDE.md

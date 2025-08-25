@@ -13,6 +13,7 @@ data/
 .git/
 .gitignore
 CLAUDE.md
+.claude/
 
 # IDE files
 .vscode/
