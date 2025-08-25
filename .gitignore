@@ -114,3 +114,18 @@ Thumbs.db
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Database files
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Test output files
+test-*.js
+
+# Development documentation
+source-code.md
+
+# IDE settings
+.serena/
