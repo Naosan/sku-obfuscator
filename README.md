@@ -1,13 +1,15 @@
-# monoalphabetic-cipher-js
+# @naosan/sku-obfuscator
 
-A lightweight and secure monoalphabetic cipher implementation for SKU encryption with deterministic algorithm-based key generation.
+A lightweight SKU obfuscation library with deterministic algorithm-based key generation for product ID masking.
+
+> ⚠️ **BREAKING CHANGE (v1.1.0+)**: The random number generator was updated to fix a potential out-of-bounds issue. This means encrypted data from versions before this update cannot be decrypted with the new version. Please ensure all systems are updated simultaneously.
 
 ## 🎯 Overview
 
-This package provides a simple yet effective monoalphabetic substitution cipher designed specifically for SKU (Stock Keeping Unit) encryption. It generates consistent character mappings from a secret key, making it perfect for scenarios where you need to:
+This package provides a simple yet effective monoalphabetic substitution system designed specifically for SKU (Stock Keeping Unit) obfuscation. It generates consistent character mappings from a secret key, making it perfect for scenarios where you need to:
 
 - Prevent Google search detection of original product IDs
-- **Hide URL structure completely** - No path separators visible
+- **Hide original URL structure** - Obfuscated output may contain any character
 - Enable offline decryption (Chrome extensions, etc.)
 - Maintain consistent encryption across multiple applications
 - Keep implementation minimal and maintainable
@@ -15,21 +17,21 @@ This package provides a simple yet effective monoalphabetic substitution cipher 
 ## ✨ Features
 
 - **🔐 Algorithm-based key generation** - No external files needed
-- **🎯 Deterministic results** - Same key always produces same cipher
+- **🎯 Deterministic results** - Same key always produces same mapping
 - **📱 Chrome extension compatible** - Offline operation support  
 - **⚡ Minimal implementation** - Core logic in ~20 lines
 - **🔤 Full character support** - a-z, A-Z, 0-9, / (63 characters)
-- **🛡️ Fisher-Yates shuffling** - Cryptographically sound mixing
+- **🛡️ Fisher-Yates shuffling** - Deterministic character mixing
 - **📦 ES Module ready** - Modern JavaScript import/export
 
 ## 🚀 Installation
 
 ```bash
 # Install from GitHub (private repository)
-npm install git+https://github.com/Naosan/monoalphabetic-cipher-js.git
+npm install git+https://github.com/Naosan/sku-obfuscator.git
 
 # Or using yarn
-yarn add git+https://github.com/Naosan/monoalphabetic-cipher-js.git
+yarn add git+https://github.com/Naosan/sku-obfuscator.git
 ```
 
 ## ⚙️ Configuration
@@ -59,7 +61,7 @@ process.env.MONO_CIPHER_KEY = "your-custom-secret-key";
 ### Basic Usage
 
 ```javascript
-import { MonoalphabeticCipher } from 'monoalphabetic-cipher-js';
+import { MonoalphabeticCipher } from '@naosan/sku-obfuscator';
 
 // Create cipher with default key (process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
 const cipher = new MonoalphabeticCipher();
@@ -77,7 +79,7 @@ console.log(decrypted); // → "S5smas8TFSWpJUso6Ro3vK"
 ### SKU Generation
 
 ```javascript
-import { generateSKU, decodeSKU } from 'monoalphabetic-cipher-js';
+import { generateSKU, decodeSKU } from '@naosan/sku-obfuscator';
 
 // Generate SKU with prefix
 const sku = generateSKU("S5smas8TFSWpJUso6Ro3vK", "si");
@@ -96,7 +98,7 @@ console.log(decoded);
 ### Quick Functions
 
 ```javascript
-import { encrypt, decrypt } from 'monoalphabetic-cipher-js';
+import { encrypt, decrypt } from '@naosan/sku-obfuscator';
 
 // One-liner encryption/decryption
 const encrypted = encrypt("myProductId123");
@@ -106,7 +108,7 @@ const decrypted = decrypt(encrypted);
 ### Custom Secret Key
 
 ```javascript
-import { MonoalphabeticCipher } from 'monoalphabetic-cipher-js';
+import { MonoalphabeticCipher } from '@naosan/sku-obfuscator';
 
 // Use custom secret key
 const cipher = new MonoalphabeticCipher("MY_CUSTOM_SECRET_KEY");
@@ -170,7 +172,7 @@ function decodeSKUtoURL(sku) {
 ## 🧪 Testing
 
 ```javascript
-import { MonoalphabeticCipher } from 'monoalphabetic-cipher-js';
+import { MonoalphabeticCipher } from '@naosan/sku-obfuscator';
 
 const cipher = new MonoalphabeticCipher();
 
@@ -187,40 +189,40 @@ const testCases = [
 ];
 
 testCases.forEach(test => {
-  const encrypted = cipher.encrypt(test);
-  const decrypted = cipher.decrypt(encrypted);
-  console.log(`${test} → ${encrypted} → ${decrypted} ✓`);
+  const obfuscated = cipher.encrypt(test);
+  const restored = cipher.decrypt(obfuscated);
+  console.log(`${test} → ${obfuscated} → ${restored} ✓`);
 });
 ```
 
 ## ⚡ Performance
 
-- **Encryption speed**: ~0.001ms per operation
-- **Decryption speed**: ~0.001ms per operation  
-- **Memory usage**: Minimal (62-entry lookup tables)
+- **Obfuscation speed**: ~0.001ms per operation
+- **Restoration speed**: ~0.001ms per operation  
+- **Memory usage**: Minimal (63-entry lookup tables)
 - **Initialization time**: < 1ms
 - **Character length**: 100% preserved (no encoding overhead)
 
-## 🛡️ Security Features
+## 🛡️ Technical Features
 
 - **Deterministic shuffling**: Fisher-Yates algorithm with seeded RNG
-- **Linear congruential generator**: Cryptographically sound pseudorandom numbers
+- **Linear congruential generator**: Consistent pseudorandom number generation
 - **Hash-based seeding**: 32-bit hash of secret key for reproducibility
-- **Full character coverage**: All 62 alphanumeric characters supported
+- **Full character coverage**: All 63 characters supported (a-z, A-Z, 0-9, /)
 - **No character expansion**: 1:1 character mapping (unlike Base64's 133% expansion)
 
 ## 🎯 Use Cases
 
-### E-commerce SKU Encryption
+### E-commerce SKU Obfuscation
 ```javascript
-// Encrypt product IDs to prevent search engine detection
+// Obfuscate product IDs to prevent search engine detection
 const cipher = new MonoalphabeticCipher("ECOMMERCE_SECRET_2025");
 const publicSKU = cipher.encrypt("internal-product-id-12345");
 ```
 
 ### Multi-Application Token Sharing
 ```javascript
-// Same key generates identical cipher across apps
+// Same key generates identical mapping across apps
 const appA_cipher = new MonoalphabeticCipher("SHARED_SECRET");
 const appB_cipher = new MonoalphabeticCipher("SHARED_SECRET");
 
@@ -243,7 +245,7 @@ const obfuscated = generateSKU(originalId, "ys");
 | **Algorithm Generation** | Medium | ✅ High | ✅ Full Support | ✅ Not Required | **Optimal** |
 | Hardcoded Tables | Low | ❌ Low | ✅ Supported | ✅ Not Required | Not Recommended |
 | Config Files | Medium | ✅ High | ⚠️ Distribution Required | ❌ Required | Acceptable |
-| Environment Variables | Low | ⚠️ Medium | ❌ Not Possible | ✅ Not Required | Not Possible |
+| Environment Variables | Low | ⚠️ Medium | ❌ Not Possible | ✅ Not Required | Not Suitable |
 | API Distribution | High | ✅ High | ❌ Online Required | ✅ Not Required | Overkill |
 
 ## 🤝 Contributing
@@ -265,4 +267,4 @@ For support with this package, please refer to the documentation or contact the 
 
 ---
 
-**Built with ❤️ for secure and efficient SKU encryption**
+**Built with ❤️ for efficient and consistent SKU obfuscation**

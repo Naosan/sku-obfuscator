@@ -1,8 +1,8 @@
 /**
- * Monoalphabetic Cipher Implementation
+ * SKU Obfuscator Implementation
  * 
- * A deterministic substitution cipher that generates consistent character mappings
- * from a secret key. Designed for SKU encryption with offline decryption capability.
+ * A deterministic character substitution system that generates consistent mappings
+ * from a secret key. Designed for SKU obfuscation with offline processing capability.
  * 
  * Features:
  * - Algorithm-based key generation (no external files needed)
@@ -89,11 +89,12 @@ export class MonoalphabeticCipher {
    * @private
    */
   seededRandom(seed) {
-    let state = seed;
+    let state = seed >>> 0; // ensure unsigned 32-bit
     return () => {
-      // Linear congruential generator
-      state = (state * 1103515245 + 12345) & 0x7fffffff;
-      return state / 0x7fffffff;
+      // Linear congruential generator (glibc系パラメータ)
+      state = (Math.imul(state, 1103515245) + 12345) >>> 0;
+      // 0 <= x < 1 を保証するため 2^32 で割る
+      return state / 0x100000000;
     };
   }
   

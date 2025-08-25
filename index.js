@@ -1,8 +1,8 @@
 /**
- * monoalphabetic-cipher-js
+ * @naosan/sku-obfuscator
  * 
- * A lightweight and secure monoalphabetic cipher implementation for SKU encryption
- * with deterministic algorithm-based key generation.
+ * A lightweight SKU obfuscation library with deterministic algorithm-based
+ * key generation for product ID masking.
  * 
  * @author Naoki
  * @version 1.1.0

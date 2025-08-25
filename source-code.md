@@ -1,3 +1,300 @@
+# Monoalphabetic Cipher JS - Complete Source Code
+
+This document contains the complete source code of the monoalphabetic-cipher-js project.
+
+## Project Structure
+```
+monoalphabetic-cipher-js/
+├── src/
+│   └── MonoalphabeticCipher.js
+├── test/
+│   └── cipher.test.js
+├── index.js
+├── package.json
+├── README.md
+├── CLAUDE.md
+├── .npmignore
+├── test-byterover-cipher.js (uncommitted)
+└── test-cipher-info.js (uncommitted)
+```
+
+## package.json
+```json
+{
+  "name": "monoalphabetic-cipher-js",
+  "version": "1.1.0",
+  "description": "A lightweight and secure monoalphabetic cipher implementation for SKU encryption with deterministic algorithm-based key generation",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test/cipher.test.js",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "cipher",
+    "encryption",
+    "monoalphabetic",
+    "sku",
+    "substitution",
+    "cryptography"
+  ],
+  "author": "Naoki",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Naosan/monoalphabetic-cipher-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Naosan/monoalphabetic-cipher-js/issues"
+  },
+  "homepage": "https://github.com/Naosan/monoalphabetic-cipher-js#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "index.js",
+    "src/",
+    "README.md"
+  ]
+}
+```
+
+## src/MonoalphabeticCipher.js
+```javascript
+/**
+ * Monoalphabetic Cipher Implementation
+ * 
+ * A deterministic substitution cipher that generates consistent character mappings
+ * from a secret key. Designed for SKU encryption with offline decryption capability.
+ * 
+ * Features:
+ * - Algorithm-based key generation (no external files needed)
+ * - Deterministic shuffling for consistent results
+ * - Support for alphanumeric and slash characters (a-z, A-Z, 0-9, /)
+ * - Chrome extension compatible (offline operation)
+ * - Minimal implementation (~20 lines of core logic)
+ * 
+ * @author Naoki
+ * @version 1.1.0
+ */
+export class MonoalphabeticCipher {
+  /**
+   * Creates a new MonoalphabeticCipher instance
+   * @param {string} secretKey - Secret key for generating cipher table (default: process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
+   */
+  constructor(secretKey = process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY") {
+    this.generateTable(secretKey);
+  }
+  
+  /**
+   * Generates encryption and decryption tables from secret key
+   * @param {string} key - Secret key for table generation
+   * @private
+   */
+  generateTable(key) {
+    // Character set: a-z, A-Z, 0-9, / (63 characters total)
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/';
+    
+    // Generate seed from secret key
+    const seed = this.hashKey(key);
+    
+    // Create deterministic shuffled version
+    const shuffled = this.deterministicShuffle(chars, seed);
+    
+    // Build encryption and decryption lookup tables
+    this.encryptTable = {};
+    this.decryptTable = {};
+    
+    for (let i = 0; i < chars.length; i++) {
+      this.encryptTable[chars[i]] = shuffled[i];
+      this.decryptTable[shuffled[i]] = chars[i];
+    }
+  }
+  
+  /**
+   * Creates a numeric hash from string key
+   * @param {string} key - Input key string
+   * @returns {number} - Hash value for seeding
+   * @private
+   */
+  hashKey(key) {
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = ((hash << 5) - hash + key.charCodeAt(i)) & 0xffffffff;
+    }
+    return Math.abs(hash);
+  }
+  
+  /**
+   * Deterministically shuffles string using Fisher-Yates algorithm with seeded RNG
+   * @param {string} str - String to shuffle
+   * @param {number} seed - Seed for random number generator
+   * @returns {string} - Shuffled string
+   * @private
+   */
+  deterministicShuffle(str, seed) {
+    const arr = str.split('');
+    const rng = this.seededRandom(seed);
+    
+    // Fisher-Yates shuffle with seeded random
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    
+    return arr.join('');
+  }
+  
+  /**
+   * Creates a seeded pseudo-random number generator
+   * @param {number} seed - Seed value
+   * @returns {function} - Random number generator function
+   * @private
+   */
+  seededRandom(seed) {
+    let state = seed;
+    return () => {
+      // Linear congruential generator
+      state = (state * 1103515245 + 12345) & 0x7fffffff;
+      return state / 0x7fffffff;
+    };
+  }
+  
+  /**
+   * Encrypts text using the generated cipher table
+   * @param {string} text - Text to encrypt
+   * @returns {string} - Encrypted text
+   */
+  encrypt(text) {
+    return text.split('').map(c => this.encryptTable[c] || c).join('');
+  }
+  
+  /**
+   * Decrypts text using the generated cipher table
+   * @param {string} text - Text to decrypt
+   * @returns {string} - Decrypted text
+   */
+  decrypt(text) {
+    return text.split('').map(c => this.decryptTable[c] || c).join('');
+  }
+  
+  /**
+   * Tests cipher consistency (encrypt then decrypt should return original)
+   * @param {string} testText - Text to test with
+   * @returns {boolean} - True if encryption/decryption is consistent
+   */
+  testConsistency(testText = "Test123abcXYZ") {
+    const encrypted = this.encrypt(testText);
+    const decrypted = this.decrypt(encrypted);
+    return testText === decrypted;
+  }
+  
+  /**
+   * Gets cipher table information for debugging
+   * @returns {Object} - Cipher table statistics
+   */
+  getTableInfo() {
+    const encryptKeys = Object.keys(this.encryptTable);
+    const decryptKeys = Object.keys(this.decryptTable);
+    
+    return {
+      encryptTableSize: encryptKeys.length,
+      decryptTableSize: decryptKeys.length,
+      isComplete: encryptKeys.length === 63 && decryptKeys.length === 63,
+      sampleMapping: {
+        'a': this.encryptTable['a'],
+        'A': this.encryptTable['A'], 
+        '0': this.encryptTable['0'],
+        '/': this.encryptTable['/']
+      }
+    };
+  }
+}
+```
+
+## index.js
+```javascript
+/**
+ * monoalphabetic-cipher-js
+ * 
+ * A lightweight and secure monoalphabetic cipher implementation for SKU encryption
+ * with deterministic algorithm-based key generation.
+ * 
+ * @author Naoki
+ * @version 1.1.0
+ */
+
+export { MonoalphabeticCipher } from './src/MonoalphabeticCipher.js';
+
+/**
+ * Default export for convenience
+ * Creates a new cipher instance with default process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY"
+ */
+export default function createCipher(secretKey = process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY") {
+  return new MonoalphabeticCipher(secretKey);
+}
+
+/**
+ * Utility functions for common SKU operations
+ */
+import { MonoalphabeticCipher } from './src/MonoalphabeticCipher.js';
+
+/**
+ * Quick encrypt function using default key
+ * @param {string} text - Text to encrypt
+ * @param {string} secretKey - Optional secret key (default: process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
+ * @returns {string} - Encrypted text
+ */
+export function encrypt(text, secretKey = process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY") {
+  const cipher = new MonoalphabeticCipher(secretKey);
+  return cipher.encrypt(text);
+}
+
+/**
+ * Quick decrypt function using default key
+ * @param {string} text - Text to decrypt
+ * @param {string} secretKey - Optional secret key (default: process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
+ * @returns {string} - Decrypted text
+ */
+export function decrypt(text, secretKey = process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY") {
+  const cipher = new MonoalphabeticCipher(secretKey);
+  return cipher.decrypt(text);
+}
+
+/**
+ * Generate SKU with prefix
+ * @param {string} productId - Product ID to encrypt
+ * @param {string} prefix - SKU prefix (default: "si")
+ * @param {string} secretKey - Optional secret key (default: process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
+ * @returns {string} - Generated SKU in format "prefix@encryptedId"
+ */
+export function generateSKU(productId, prefix = "si", secretKey = process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY") {
+  const cipher = new MonoalphabeticCipher(secretKey);
+  const encrypted = cipher.encrypt(productId);
+  return `${prefix}@${encrypted}`;
+}
+
+/**
+ * Decode SKU to original product ID
+ * @param {string} sku - SKU in format "prefix@encryptedId"
+ * @param {string} secretKey - Optional secret key (default: process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
+ * @returns {Object} - {prefix, productId, type: 'monoalphabetic'}
+ */
+export function decodeSKU(sku, secretKey = process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY") {
+  const [prefix, encrypted] = sku.split('@');
+  const cipher = new MonoalphabeticCipher(secretKey);
+  const productId = cipher.decrypt(encrypted);
+  
+  return {
+    prefix,
+    productId,
+    type: 'monoalphabetic'
+  };
+}
+```
+
+## test/cipher.test.js
+```javascript
 /**
  * Test Suite for MonoalphabeticCipher
  * 
@@ -41,9 +338,6 @@ async function runTests() {
     
     // Chrome extension simulation
     testChromeExtensionUsage();
-    
-    // Real world examples
-    testRealWorldExamples();
     
     // Environment variable support
     testEnvironmentVariable();
@@ -127,9 +421,9 @@ function testEdgeCases() {
   const decryptedSingle = cipher.decrypt(encryptedSingle);
   assertEquals(decryptedSingle, singleChar, "Single character should encrypt/decrypt correctly");
   
-  // Special characters (should remain unchanged, except /)
-  const specialChars = "!@#$%^&*()_+-=[]{}|;':\",.<>?";  // / removed since it's in the cipher alphabet
-  assertEquals(cipher.encrypt(specialChars), specialChars, "Special characters (except /) should remain unchanged");
+  // Special characters (should remain unchanged)
+  const specialChars = "!@#$%^&*()_+-=[]{}|;':\",./<>?";
+  assertEquals(cipher.encrypt(specialChars), specialChars, "Special characters should remain unchanged");
   
   // Mixed alphanumeric with special characters
   const mixed = "Test123!@#";
@@ -341,3 +635,72 @@ function testEnvironmentVariable() {
 
 // Run all tests
 runTests().catch(console.error);
+```
+
+## .npmignore
+```
+# Test files
+test/
+test-*.js
+*.test.js
+
+# Database files
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Development files
+.git/
+.gitignore
+CLAUDE.md
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Build artifacts
+dist/
+build/
+```
+
+## Usage Examples
+
+### Basic Usage
+```javascript
+import { MonoalphabeticCipher } from 'monoalphabetic-cipher-js';
+
+const cipher = new MonoalphabeticCipher();
+const encrypted = cipher.encrypt("Hello123");
+const decrypted = cipher.decrypt(encrypted);
+```
+
+### SKU Generation
+```javascript
+import { generateSKU, decodeSKU } from 'monoalphabetic-cipher-js';
+
+const sku = generateSKU("productId123", "si");
+const decoded = decodeSKU(sku);
+```
+
+### Environment Variable Usage
+```javascript
+process.env.MONO_CIPHER_KEY = "MY_SECRET_KEY";
+const cipher = new MonoalphabeticCipher();
+```
