@@ -1,9 +1,5 @@
 # @naosan/sku-obfuscator
 
-A lightweight SKU obfuscation library with deterministic algorithm-based key generation for product ID masking.
-
-> ⚠️ **BREAKING CHANGE (v1.1.0+)**: The random number generator was updated to fix a potential out-of-bounds issue. This means encrypted data from versions before this update cannot be decrypted with the new version. Please ensure all systems are updated simultaneously.
-
 ## 🎯 Overview
 
 This package provides a simple yet effective monoalphabetic substitution system designed specifically for SKU (Stock Keeping Unit) obfuscation. It generates consistent character mappings from a secret key, making it perfect for scenarios where you need to:
