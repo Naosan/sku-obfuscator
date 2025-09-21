@@ -48,7 +48,7 @@ export function decrypt(text, secretKey = process.env.MONO_CIPHER_KEY || "MONO_C
 /**
  * Generate SKU with prefix
  * @param {string} productId - Product ID to encrypt
- * @param {string} prefix - SKU prefix (default: "si")
+ * @param {string} prefix 
  * @param {string} secretKey - Optional secret key (default: process.env.MONO_CIPHER_KEY || "MONO_CIPHER_KEY")
  * @returns {string} - Generated SKU in format "prefix@encryptedId"
  */
